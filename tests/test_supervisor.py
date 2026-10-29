@@ -45,13 +45,13 @@ def test_rotate_log(tmp_path):
 def test_read_tail_follows_and_handles_rotation(tmp_path):
     p = tmp_path / "x.log"
     assert read_tail(p, 0) == ("", 0)
-    p.write_text("one\n", encoding="utf-8")
+    p.write_bytes(b"one\n")
     text, off = read_tail(p, 0)
     assert text == "one\n"
-    with p.open("a", encoding="utf-8") as f:
-        f.write("two\n")
+    with p.open("ab") as f:
+        f.write(b"two\n")
     text, off = read_tail(p, off)
     assert text == "two\n"
-    p.write_text("new\n", encoding="utf-8")  # rotated / truncated
+    p.write_bytes(b"new\n")  # rotated / truncated
     text, off = read_tail(p, off + 100)
     assert text == "new\n"
