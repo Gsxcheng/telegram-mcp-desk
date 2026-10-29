@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Never commit Telegram credentials or sessions
+.env
+.env.*
+!.env.example
+*.session
+*.session-journal
+session_string*.txt
+logs/
+*.log
+diagnostics-*.zip
+packaging/tgmcp-desk.ico
