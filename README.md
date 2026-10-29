@@ -77,7 +77,7 @@ uv run python tools/check_no_secrets.py
 - `src/tgmcp_desk/ui/`：PySide6 界面。
 - `tests/fakes/`：测试用的假 Telethon，所有数据都是编造的。
 
-打包：`uv sync --group build && uv run python packaging/make_icon.py && uv run pyinstaller packaging/tgmcp-desk.spec`。推送 `v*` 标签时 GitHub Actions 会构建并创建草稿 Release。
+打包：`uv sync --group build && uv run python packaging/make_icon.py && uv run pyinstaller packaging/tgmcp-desk.spec`。推送 `v*` 标签，或在 Actions 里手动运行 Release 工作流并填版本号，都会构建 exe 并创建草稿 Release。
 
 ## 许可证
 

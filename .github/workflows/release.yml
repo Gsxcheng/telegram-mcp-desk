@@ -3,6 +3,11 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag to create, e.g. v0.1.0-alpha.1 (created on the selected branch's HEAD)"
+        required: true
 
 permissions:
   contents: write
@@ -12,6 +17,7 @@ jobs:
     runs-on: windows-latest
     env:
       QT_QPA_PLATFORM: offscreen
+      VERSION: ${{ inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -23,12 +29,13 @@ jobs:
       - name: Zip
         shell: pwsh
         run: |
-          $name = "TGMCP-Desk-${{ github.ref_name }}-windows-x64.zip"
+          $name = "TGMCP-Desk-$env:VERSION-windows-x64.zip"
           Compress-Archive -Path "dist/TGMCP Desk" -DestinationPath $name
           (Get-FileHash $name -Algorithm SHA256).Hash.ToLower() + "  " + $name | Out-File -Encoding ascii "$name.sha256"
-      - name: Publish release
+      - name: Create draft release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.ref_name }}" --draft --title "TGMCP Desk ${{ github.ref_name }}" --notes "未签名的测试版。首次运行 Windows 可能提示「已保护你的电脑」，点「更多信息 → 仍要运行」。" TGMCP-Desk-*.zip TGMCP-Desk-*.zip.sha256
+          $notes = "未签名的测试版。首次运行 Windows 可能提示「已保护你的电脑」，点「更多信息 → 仍要运行」。"
+          gh release create "$env:VERSION" --draft --target "$env:GITHUB_SHA" --title "TGMCP Desk $env:VERSION" --notes $notes (Get-ChildItem TGMCP-Desk-*.zip*).FullName
